@@ -4,7 +4,7 @@ import { CheckmarkOutline, Store, DevicesApps, GroupPresentation, UserMultiple }
 import "@carbon/charts/styles.css";
 import { DataTableComponent } from "../../data-table/data-table.component";
 import ViewButton from "../../home/view-button";
-import { fourXheaders } from "../../../constants";
+import {emrVersion, fourXheaders} from "../../../constants";
 import dayjs from "dayjs";
 import { DateFilterInput } from "../../date-picker/date-picker";
 import {
@@ -155,7 +155,7 @@ const UgandaemrPOC = (props) => {
                 <tbody>
                 <tr>
                   <td>Version:</td>
-                  <td className="emr-version"> {'4.0.0-SNAPSHOT'}
+                  <td className="emr-version"> {emrVersion}
                     <CheckmarkOutline size={15}/></td>
                 </tr>
                 <tr>

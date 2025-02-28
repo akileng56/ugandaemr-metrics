@@ -12,13 +12,17 @@ import {
   facilityHeaders, pieChartLevelsRDEPOCOptions,
   pieChartRDEPOCOptions,
   stackedChartByCDCPartners, stackedChartByLevel,
-  stackedChartByUSAIDPartners,
+  stackedChartByUSAIDPartners, emrVersion
 } from "../../../constants";
 import dayjs from "dayjs";
 import {PieChart, StackedBarChart} from "@carbon/charts-react";
 import {
   coverageByLevel,
-  coverageByPartner, facilityByFunctionality,
+  coverageByPartner,
+  coverageMechanism,
+  coverageOrther,
+  coverageOthers,
+  facilityByFunctionality,
   facilityDetailsPlus
 } from "./functions";
 import ViewButton from "../../home/view-button";
@@ -26,6 +30,7 @@ import MapComponent from "../../maps/map";
 
 const UgandaemrCoverage = (props) => {
   const [data, setData] = useState([]);
+  const [allFacilities, setAllFacilities] = useState([]);
   const fetchData = async () => {
     const date = dayjs(new Date()).format("YYYY-MM-DD")
     try {
@@ -34,8 +39,9 @@ const UgandaemrCoverage = (props) => {
         console.error('Network response was not ok');
       }
       const jsonData = await response.json();
-      const ugandaEMRPLusFacilites = jsonData?.filter((facilty) => facilty?.emrversion?.startsWith("4"));
+      const ugandaEMRPLusFacilites = jsonData?.filter((facilty) => facilty?.emrversion === emrVersion);
       setData(ugandaEMRPLusFacilites);
+      setAllFacilities(jsonData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -63,13 +69,13 @@ const UgandaemrCoverage = (props) => {
                     <tr>
                       <td className="td-text-align">Version:</td>
                       <td
-                        className="td-details-value"> &nbsp; {'4.0.3'}</td>
+                        className="td-details-value"> &nbsp; {emrVersion}</td>
                     </tr>
                     <tr>
                       <td className="td-text-align">% of sites:</td>
                       <td className="td-details-value">
-                        &nbsp;{((facilityDetailsPlus(data).count / 1700) * 100).toFixed(1)}%
-                        of 1700
+                        &nbsp;{((facilityDetailsPlus(data)?.count / allFacilities?.length) * 100).toFixed(1)}%
+                        of {allFacilities?.length}
 
                       </td>
                     </tr>
@@ -96,18 +102,18 @@ const UgandaemrCoverage = (props) => {
                     <td className="td-text-align">No. of POC:</td>
                     <td className="td-details-value">
                       <span className="level-text">
-                       &nbsp; {facilityByFunctionality(data).POC} of {facilityDetailsPlus(data).count}
+                       &nbsp; {facilityByFunctionality(data).POC} of {allFacilities?.length}
                       </span>
-                      &nbsp; ({((facilityByFunctionality(data).POC / facilityDetailsPlus(data).count) * 100).toFixed(1)}%)
+                      &nbsp; ({((facilityByFunctionality(data).POC / allFacilities?.length) * 100).toFixed(1)}%)
                     </td>
                   </tr>
                   <tr>
                     <td className="td-text-align">No. of Retrospective:</td>
                     <td className="td-details-value">
                       <span className="level-text">
-                        &nbsp; {facilityByFunctionality(data).RDE} of {facilityDetailsPlus(data).count}
+                        &nbsp; {facilityByFunctionality(data).RDE} of {allFacilities?.length}
                       </span>
-                      &nbsp; ({((facilityByFunctionality(data).RDE / facilityDetailsPlus(data).count) * 100).toFixed(1)}%)
+                      &nbsp; ({((facilityByFunctionality(data).RDE / allFacilities?.length) * 100).toFixed(1)}%)
                     </td>
                   </tr>
                   <tr>
@@ -136,29 +142,29 @@ const UgandaemrCoverage = (props) => {
                   <tr>
                     <td className="td-text-align">CDC:</td>
                     <td className="td-details-value">
-                      &nbsp; {((coverageByPartner(data, "CDC").totalCount / facilityDetailsPlus(data).count) * 100).toFixed(1)}%
-                      &nbsp; ({coverageByPartner(data, "CDC").totalCount} / {facilityDetailsPlus(data).count})
+                      &nbsp; {((coverageByPartner(data, "CDC").totalCount / coverageMechanism(allFacilities,"CDC").totalCount) * 100).toFixed(1)}%
+                      &nbsp; ({coverageByPartner(data, "CDC").totalCount} / {coverageMechanism(allFacilities,"CDC").totalCount})
                     </td>
                   </tr>
                   <tr>
                     <td className="td-text-align">USAID:</td>
                     <td className="td-details-value">
-                      &nbsp; {((coverageByPartner(data, "USAID").totalCount / facilityDetailsPlus(data).count) * 100).toFixed(1)}%
-                      &nbsp; ({coverageByPartner(data, "USAID").totalCount} / {facilityDetailsPlus(data).count})
+                      &nbsp; {((coverageByPartner(data, "USAID")?.totalCount / coverageMechanism(allFacilities,"USAID")?.totalCount) * 100).toFixed(1)}%
+                      &nbsp; ({coverageByPartner(data, "USAID")?.totalCount} / {coverageMechanism(allFacilities,"USAID")?.totalCount})
                     </td>
                   </tr>
                   <tr>
                     <td className="td-text-align">DOD:</td>
                     <td className="td-details-value">
-                      &nbsp; {((coverageByPartner(data, "DOD").totalCount / facilityDetailsPlus(data).count) * 100).toFixed(1)}%
-                      &nbsp; ({coverageByPartner(data, "DOD").totalCount} / {facilityDetailsPlus(data).count})
+                      &nbsp; {((coverageByPartner(data, "DOD")?.totalCount / coverageMechanism(allFacilities,"DOD")?.totalCount) * 100).toFixed(1)}%
+                      &nbsp; ({coverageByPartner(data, "DOD")?.totalCount} / {coverageMechanism(allFacilities,"DOD")?.totalCount})
                     </td>
                   </tr>
                   <tr>
                     <td className="td-text-align">Others:</td>
                     <td className="td-details-value">
-                      &nbsp; {((1 / facilityDetailsPlus(data).count) * 100).toFixed(1)}%
-                      &nbsp; (1 / {facilityDetailsPlus(data).count})
+                      &nbsp; {((coverageOthers(data,allFacilities)?.others_Upgraded/ coverageOthers(data,allFacilities)?.totalOthers) * 100).toFixed(1)}%
+                      &nbsp; ( {coverageOthers(data,allFacilities)?.others_Upgraded} / {coverageOthers(data,allFacilities)?.totalOthers})
                     </td>
                   </tr>
                   </tbody>

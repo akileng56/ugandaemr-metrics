@@ -407,3 +407,5 @@ export function getProfiles() {
 }
 
 export const allHIEExchange = ["VL_PROGRAM_SEND","VL_REQUEST","VL_SEND","CRPDDP_SEND","MORTALITY","CBS","eHMIS","eCBSS","RECENCY"];
+
+export const emrVersion = "4.0.3";

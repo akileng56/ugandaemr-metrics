@@ -1,16 +1,16 @@
 export const facilityDetailsPlus = (data) => {
   const facility = [];
   let count = 0;
-  const uniqueFacilities = uniqueFacilityByUUID(data);
-  uniqueFacilities?.forEach((record, index) => {
+  // const uniqueFacilities = uniqueFacilityByUUID(data);
+  data?.forEach((record, index) => {
     facility.push({
       id: `${index++}`,
       no: `${index++}`,
       facility_id: record?.sourceid,
       facility: record?.facilityname,
       version:record?.emrversion,
-      level: record?.sourceid === "aUoqX6lBNFA" ? "HC II" : record?.ftype,
-      district: record?.sourceid === "aUoqX6lBNFA" ? "Kampala District" : record?.district,
+      level: record?.ftype,
+      district: record?.district,
       ip: record?.ip,
       agency: record?.agency,
       functionality: record?.poc_active === 1 ? "POC" : "Retrospective",
@@ -23,7 +23,7 @@ export const facilityDetailsPlus = (data) => {
     count += 1;
   });
 
-  return { facility,count };
+  return { facility,count, total: data?.length };
 };
 
 export const coverageByPartner = (data, agency) => {
@@ -51,6 +51,12 @@ export const coverageByPartner = (data, agency) => {
     facilities: coverageByAgency,
     totalCount: facilities?.length
   };
+}
+
+export const coverageMechanism = (data, agency) => {
+  const facilities = data?.filter((item) => item?.agency === agency);
+
+  return { totalCount: facilities?.length }
 }
 
 export const coverageByLevel = (data) => {
@@ -135,4 +141,20 @@ export function uniqueFacilityByUUID (data) {
     seen.add(item?.sourceid);
     return !duplicate;
   });
+}
+
+export const coverageOthers = (data, allFacilities) => {
+  const CDC_Upgraded = coverageByPartner(data, "CDC").totalCount;
+  const totalCDC = coverageMechanism(allFacilities,"CDC").totalCount;
+
+  const USAID_Upgraded = coverageByPartner(data, "USAID").totalCount;
+  const totalUSAID = coverageMechanism(allFacilities,"USAID").totalCount;
+
+  const DOD_Upgraded = coverageByPartner(data, "DOD").totalCount;
+  const totalDOD = coverageMechanism(allFacilities,"DOD").totalCount;
+
+  const others_Upgraded = data?.length - (CDC_Upgraded + USAID_Upgraded + DOD_Upgraded);
+  const totalOthers = allFacilities?.length - (totalCDC + totalUSAID + totalDOD);
+
+  return {others_Upgraded, totalOthers};
 }
