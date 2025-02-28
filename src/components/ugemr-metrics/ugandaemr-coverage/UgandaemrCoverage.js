@@ -27,10 +27,12 @@ import {
 } from "./functions";
 import ViewButton from "../../home/view-button";
 import MapComponent from "../../maps/map";
+import {Toggle} from "@carbon/react";
 
 const UgandaemrCoverage = (props) => {
   const [data, setData] = useState([]);
   const [allFacilities, setAllFacilities] = useState([]);
+  const [isUpgraded, setIsUpgraded] = useState(true);
   const fetchData = async () => {
     const date = dayjs(new Date()).format("YYYY-MM-DD")
     try {
@@ -45,6 +47,10 @@ const UgandaemrCoverage = (props) => {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+  };
+
+  const handleToggle = () => {
+    setIsUpgraded(!isUpgraded);
   };
 
   useEffect(() => {
@@ -251,13 +257,20 @@ const UgandaemrCoverage = (props) => {
 
         <div className="item-chart-container">
           <div className="item-chart">
-            <div className="cds--cc--title">
+            <div className="cds--cc--title coverage-header-container">
               <p className="title" role="heading" aria-level="2">
                 UgandaEMR+ Facilities as per Today
                 ({dayjs(new Date()).format("DD/MMM/YYYY")})
               </p>
+              <Toggle
+                aria-labelledby={`toggle-facilities`}
+                labelA={`Facilities Not Upgraded`}
+                labelB={`Upgraded Facilities`}
+                defaultToggled={true}
+                onToggle={handleToggle}
+              />
             </div>
-            <DataTableComponent rows={facilityDetailsPlus(data).facility}
+            <DataTableComponent rows={facilityDetailsPlus(isUpgraded ? data : allFacilities?.filter((faciltyItem) => faciltyItem?.emrversion !== emrVersion)).facility}
                                 headers={facilityHeaders} indicator={false}
                                 showDownload={facilityDetailsPlus(data).facility.length > 0}/>
           </div>

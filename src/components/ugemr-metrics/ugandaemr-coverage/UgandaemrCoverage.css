@@ -192,3 +192,8 @@
   font-size: 3em;
   color: #b9b7b7;
 }
+
+.coverage-header-container {
+  display: flex;
+  justify-content: space-between;
+}

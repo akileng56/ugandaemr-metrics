@@ -97,7 +97,6 @@ const UgandaemrHIE = (props) => {
         return profile;
       });
       setProfiles(updatedProfiles);
-      console.info(CUR);
     }
   }, [tileData]);
 
