@@ -244,16 +244,17 @@ const UgandaemrCoverage = (props) => {
             <MapComponent facilityArray={facilityDetailsPlus(data).facility}/>
           </div>
         </div>
-        <div className="tile-container">
-          <div className="tile-coverage tile-margin">
-            <StackedBarChart options={stackedChartByCDCPartners}
-                             data={coverageByPartner(data, "CDC").facilities}/>
-          </div>
-          <div className="tile-coverage tile-margin">
-            <StackedBarChart options={stackedChartByUSAIDPartners}
-                             data={coverageByPartner(data, "USAID").facilities}/>
-          </div>
-        </div>
+
+        {/*<div className="tile-container">*/}
+        {/*  <div className="tile-coverage tile-margin">*/}
+        {/*    <StackedBarChart options={stackedChartByCDCPartners}*/}
+        {/*                     data={coverageByPartner(data, "CDC").facilities}/>*/}
+        {/*  </div>*/}
+        {/*  <div className="tile-coverage tile-margin">*/}
+        {/*    <StackedBarChart options={stackedChartByUSAIDPartners}*/}
+        {/*                     data={coverageByPartner(data, "USAID").facilities}/>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
 
         <div className="item-chart-container">
           <div className="item-chart">
